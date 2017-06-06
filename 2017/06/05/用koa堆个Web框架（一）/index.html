@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title> 新的开始 · 逼格人溜溜溜 </title>
+    <title> 用koa堆个Web框架（一） · 逼格人溜溜溜 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -122,23 +122,51 @@
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
-                <span>2017年6月2日</span>
+                <span>2017年6月5日</span>
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                新的开始
+                用koa堆个Web框架（一）
             
             </h1>
             
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/typhon/">typhon</a>
+                    
+                        <a href="/tags/node-js/">node.js</a>
+                    
+                        <a href="/tags/koa/">koa</a>
+                    
+                    </div>
                 
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                <p>开始用hexo和github pages构建静态blog。</p>
+                <h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a><strong>正式开始</strong></h2><p>先上一张图，来解释下一个浅薄的web框架基本功能。</p>
+<p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/framework.jpg" alt="框架"></p>
+<p>nodejs有很多框架，express.js，koa.js，sails.js，始终不如自己堆一个理解的透彻！所以，堆砌的最终目标依旧是学习。</p>
 <a id="more"></a>
-<h2 id="ro属性表备忘"><a href="#ro属性表备忘" class="headerlink" title="ro属性表备忘"></a><a href="#ro">ro属性表备忘</a></h2><p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/ro-shuxing.jpg" alt="ro属性相克表"></p>
-<h2 id="刘文正"><a href="#刘文正" class="headerlink" title="刘文正"></a>刘文正</h2><p>今天今天你要老实讲～虽然我是个穷光蛋～</p>
+<hr>
+<h2 id="起步，koajs"><a href="#起步，koajs" class="headerlink" title="起步，koajs"></a><strong>起步，koajs</strong></h2><ol>
+<li><p>先给项目起个名字就叫typhon好了。在typhon目录下输入命令<code>npm init</code>回车，按照提示简单的初始化项目。</p>
+<p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/npminit.jpg" alt="npminit"></p>
+</li>
+<li><p>既然用koajs，二话不说先安装koa依赖，<code>npm i koa@1 --save</code>，等安装完成。</p>
+<p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/installkoa.jpg" alt="installkoa"></p>
+</li>
+<li><p>Koa.js的api可以在<a href="http://koajs.com" target="_blank" rel="external">官网</a>查看，koa的中间件理论是koa框架的核心，只是，我个人认为，除了这个理论以外，这个官网还真是啥都没说，不过，聊胜于无，就先看看官网API上引导怎么用koa搭建一个Web应用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</div><div class="line"><span class="keyword">var</span> app = koa();</div><div class="line"></div><div class="line">app.use(<span class="function"><span class="keyword">function</span> *(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">'Hello World'</span>;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.listen(<span class="number">3000</span>);</div></pre></td></tr></table></figure>
+<p>这段代码简单的揭示了koa的核心用法：中间件。也就是说，所有的业务逻辑，路由，数据处理，日志等等的一切，全都写成中间件放<code>app.use</code>里，然后等它自己顺序执行就好。</p>
+</li>
+<li><p>让我们在VSCode里执行这段没有营养的代码，打开浏览器输入localhost:3000看看结果，好吧，如图所示Hello World。</p>
+<p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/run01-1.jpg" alt="run01-1"></p>
+<p>这就是我们想要的结果吗？既然是堆砌，肯定不会这么简单的就完，如果仅仅是这样的文章，网上能搜到上万篇了，可该记录的还得记录不是么。</p>
+<p>​</p>
+</li>
+</ol>
 
             
         
@@ -154,7 +182,7 @@
         </div>
         <div class="copy-url">
             <span>地址 :</span>
-            <a href="http://biger666.win/2017/06/02/新的开始/">http://biger666.win/2017/06/02/新的开始/</a>
+            <a href="http://biger666.win/2017/06/05/用koa堆个Web框架（一）/">http://biger666.win/2017/06/05/用koa堆个Web框架（一）/</a>
         </div>
         <div class="copy-origin">
             <span>来源 :</span>
@@ -172,12 +200,18 @@
         
     <nav class="article-page">
         
-            <a href="/2017/06/05/用KOA堆个Web框架（零）/" id="art-left" class="art-right">
+            <a href="/2017/06/06/用koa堆个Web框架（二）/" id="art-left" class="art-right">
                 <span class="next-title">
-                    用koa堆个Web框架（零）<i class="iconfont icon-right"></i> 
+                    用koa堆个Web框架（二）<i class="iconfont icon-right"></i> 
                 </span>
             </a>
         
+        
+            <a href="/2017/06/05/用KOA堆个Web框架（零）/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>用koa堆个Web框架（零）
+                </span>
+            </a>
         
     </nav>
 
@@ -301,8 +335,8 @@ $(document).ready(function(){
     <div class="post-toc">
         <span class="title">文章目录</span>
         <div class="toc-inner syuanpi back-1 fallIn-light">
-            <li class="title-link"><a href="javascript:;" class="toTop">新的开始</a></li>
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ro属性表备忘"><span class="toc-text">ro属性表备忘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#刘文正"><span class="toc-text">刘文正</span></a></li></ol>
+            <li class="title-link"><a href="javascript:;" class="toTop">用koa堆个Web框架（一）</a></li>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#正式开始"><span class="toc-text">正式开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#起步，koajs"><span class="toc-text">起步，koajs</span></a></li></ol>
         </div>
     </div>
 

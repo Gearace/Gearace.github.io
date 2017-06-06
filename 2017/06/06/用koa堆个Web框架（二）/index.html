@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title> 用koa堆个Web框架（二） · 逼格人溜溜溜 </title>
+    <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<link rel="stylesheet" href="/style/style.css">
+<script src="/script/jquery.min.js"></script>
+<script>
+    var CONFIG = {
+        title: "逼格人溜溜溜",
+        author: "Gearace",
+        lightbox: true,
+        animate: true
+    }
+</script>
+
+
+
+    <link rel="stylesheet" href="/lightbox/css/lightbox.min.css">
+
+
+
+
+    <link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-inner"></div>
+</div>
+    <div class="body">
+    <div class="tagcloud" id="tagcloud">
+    <div class="tagcloud-inner">
+        <a href="/tags/koa/" style="font-size: 14px;">koa</a> <a href="/tags/node-js/" style="font-size: 14px;">node.js</a> <a href="/tags/typhon/" style="font-size: 14px;">typhon</a>
+    </div>
+</div>
+    <header class="header" id="header">
+    <div class="title syuanpi tvIn">
+    <div class="table">
+        <div class="connect">
+            <div class="connect-inner">
+                <span><a href="/">逼格人溜溜溜</a></span>
+                
+                    <span id="subtitle">做个有逼格的人才老铁溜溜溜</span>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <nav class="main-nav syuanpi tvIn">
+<div class="table">
+
+    <ul class="menu">
+        
+        
+            <li class="menu-item">
+                <a href="/">
+                    <span>文章</span>
+                    
+                        <span class="menu-item-label">article</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="/archives">
+                    <span>归档</span>
+                    
+                        <span class="menu-item-label">archives</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="javascript:;" id="tags">
+                    <span>标签</span>
+                    
+                        <span class="menu-item-label">tags</span>
+                    
+                </a>
+            </li>
+        
+        
+        
+            <li class="menu-item">
+                <a href="/about">
+                    <span>关于</span>
+                    
+                        <span class="menu-item-label">about</span>
+                    
+                </a>
+            </li>
+        
+        
+    </ul>
+
+</div>
+</nav>
+<div class="mobile-nav"></div>
+</header>
+    <div class="container">
+        <main class="main" id="main">
+            
+    
+    <article class="post">
+        <header class="post-header">
+            <div class="post-time syuanpi riseIn-light back-1">
+                <span>2017年6月6日</span>
+            </div>
+            <h1 class="post-title syuanpi riseIn-light back-2">
+            
+                用koa堆个Web框架（二）
+            
+            </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/typhon/">typhon</a>
+                    
+                        <a href="/tags/node-js/">node.js</a>
+                    
+                        <a href="/tags/koa/">koa</a>
+                    
+                    </div>
+                
+            
+        </header>
+        <div class="post-content syuanpi riseIn-light back-3">
+            
+                <h1 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a><strong>处理请求</strong></h1><p>这篇开始讲点干货，第一步，处理http请求，http协议相关讲解，就不在这里记录了，以后说不定会单独展开记录。</p>
+<p>需要提的是http协议是无状态协议，所以催生了cookie,session的管理登录的方案，当然了，本节讨论的不是这个，而是对http请求的处理，Web应用几乎所有的操作都是处理http请求，所以怎么处理好http请求，是堆砌框架好的开始。</p>
+<a id="more"></a>
+<h2 id="http-请求分析"><a href="#http-请求分析" class="headerlink" title="http 请求分析"></a><strong>http 请求分析</strong></h2><blockquote>
+<p>举例一个完整的href：</p>
+<p><a href="http://localhost:3000/user?real_name=jack&amp;mobile_phone=18309680001" target="_blank" rel="external">http://localhost:3000/user?real_name=jack&amp;mobile_phone=18309680001</a></p>
+</blockquote>
+<p>通常来说是请求用户信息的地址，由三个部分组成：</p>
+<p>源地址(origin)：<code>http://localhost:3000</code></p>
+<p>路径(path)：<code>/user</code></p>
+<p>请求参数(querystring)：<code>real_name=jack&amp;mobile_phone=18309680001</code></p>
+<h2 id="http-请求方法"><a href="#http-请求方法" class="headerlink" title="http 请求方法"></a><strong>http 请求方法</strong></h2><p>有GET, POST, PUT, DELETE，通过在nodejs的http.Server类回调中的request.method可以获得请求的具体方法，那么在koa中怎么去处理这些方法呢？koa提供了封装的</p>
+<p>ctx.request方法，以及ctx.method，更提供了原生Nodejs的request访问方法ctx.req（ps.ctx是context，nodejs原生request是http.IncomingMessage），说这么多来点干货，改造前面的例子中<code>app.use</code>段。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">app.use(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// koa封装的request.method的别名</span></div><div class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'GET'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'hello method GET!'</span></div><div class="line">  <span class="comment">// koa封装的request.method</span></div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.request.method === <span class="string">'POST'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'hello method POST!!'</span></div><div class="line">  <span class="comment">// node的request.method</span></div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.req.method === <span class="string">'PUT'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'hello method PUT!!!'</span></div><div class="line">  <span class="comment">// 同GET</span></div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'DELETE'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'hello method DELETE!!!!'</span></div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这段代码中，通过koa封装请求路径中<code>/user</code>就是请求路径，这个路径也就是我们常说的web路由。目前可以通过上面的代码测试下，无论localhost:3000/后面跟上什么路径，都会返回同样的结果，很明显，这并不是我们想要的结果。</p>
+<p><img src="http://oqxcxwdtv.bkt.clouddn.com/img/result02-1.jpg" alt="result01-1"></p>
+<h2 id="http-请求路径"><a href="#http-请求路径" class="headerlink" title="http 请求路径"></a><strong>http 请求路径</strong></h2><p>在上面的完整请求地址中<code>/user</code>就是请求路径，这个路径也就是我们常说的web路由。目前可以通过上面的代码测试下，无论localhost:3000/后面跟上什么路径，都会返回同样的结果，很明显，这并不是我们想要的结果。</p>
+<p>试想下，如果想通过/search, /create, /modify, /remove四个路径分别对应GET, POST, PUT, DELETE方法，该怎么去做呢？还是改造前面的例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">app.use(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// koa封装的request.path的别名</span></div><div class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.path === <span class="string">'/'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'Hello World'</span>;</div><div class="line">    <span class="comment">// koa封装的request.path</span></div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.request.path === <span class="string">'/search'</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'GET'</span>) &#123;</div><div class="line">      <span class="keyword">this</span>.body = <span class="string">'hello method GET!'</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.throw(<span class="number">405</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// node的request.url是完整的请求地址，相当于前面http请求分析中的path+?+querystring</span></div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.req.url === <span class="string">'/create'</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'POST'</span>) &#123;</div><div class="line">      <span class="keyword">this</span>.body = <span class="string">'hello method POST!!'</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.throw(<span class="number">405</span>);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.path === <span class="string">'/modify'</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'PUT'</span>) &#123;</div><div class="line">      <span class="keyword">this</span>.body = <span class="string">'hello method PUT!!!'</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.throw(<span class="number">405</span>);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.path === <span class="string">'/remove'</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'DELETE'</span>) &#123;</div><div class="line">      <span class="keyword">this</span>.body = <span class="string">'hello method DELETE!!!!'</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.throw(<span class="number">405</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>不难看出通过对path(url)的判断，实现了web路由的功能。</p>
+<h2 id="http-请求参数"><a href="#http-请求参数" class="headerlink" title="http 请求参数"></a><strong>http 请求参数</strong></h2><p>Web请求最终的目标是获取client提交的数据。对于GET和DELETE请求，koa提供了<code>this.query</code>和<code>this.request.query</code>方法，方便获取请求参数。对于POST和PUT请求，http协议规定提交的数据必须放在entity-body中，但重点在于content-type编码格式，常见的编码格式如下</p>
+<blockquote>
+<p>application/x-www-form-urlencoded —— form表单的数据提交</p>
+<p>multipart/form-data —— form表单的文件上传</p>
+<p>application/json —— Angularjs的Ajax提交</p>
+<p>application/xml —— 微信公众号的消息发送</p>
+</blockquote>
+<p>为了能够更好出处理这些请求编码，这里我们开始引入第一个中间件<code>koa-body</code>来处理前三种编码（至于xml的处理，后续有机会记录到微信的时候再提）。<code>koa-body</code>会很好的处理这三种编码，而我们只需要关心怎么通过request来获取entity-body中的参数。</p>
+<p>具体使用方法：首先在typhon目录下，执行命令<code>npm i koa-body@1 --save</code>安装依赖，然后修改index.js文件的代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</div><div class="line"><span class="keyword">var</span> app = koa();</div><div class="line"><span class="comment">// 加入koa-body的引用</span></div><div class="line"><span class="keyword">var</span> koaBody = <span class="built_in">require</span>(<span class="string">'koa-body'</span>);</div><div class="line">app.use(koaBody());</div></pre></td></tr></table></figure>
+<p>这样就完成啦，然后就是获取请求中的参数，koa-body提供了this.request.body来获取具体的参数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> name = <span class="keyword">this</span>.request.body.name;</div></pre></td></tr></table></figure>
+<p>这样就完成了http请求的处理。</p>
+
+            
+        
+        </div>
+        
+            
+            
+    <hr class="copy-line">
+    <div class="post-copyright">
+        <div class="copy-author">
+            <span>作者 :</span>
+            <span>Gearace</span>
+        </div>
+        <div class="copy-url">
+            <span>地址 :</span>
+            <a href="http://biger666.win/2017/06/06/用koa堆个Web框架（二）/">http://biger666.win/2017/06/06/用koa堆个Web框架（二）/</a>
+        </div>
+        <div class="copy-origin">
+            <span>来源 :</span>
+            <a href="http://biger666.win">http://biger666.win</a>
+        </div>
+        <div class="copy-license">
+            
+            著作权归作者所有，转载请联系作者获得授权。
+        </div>
+    </div>
+
+        
+    </article>
+    
+        
+    <nav class="article-page">
+        
+        
+            <a href="/2017/06/05/用koa堆个Web框架（一）/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>用koa堆个Web框架（一）
+                </span>
+            </a>
+        
+    </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more syuanpi jumping-in long infinite" style="font-size:24px;display:block;text-align:center;"></i>
+    <div class="post-comments" id="post-comments" style="display: none;margin: auto 16px;">
+        
+        
+        
+    <div class="cloud-tie-wrapper" id="cloud-tie-wrapper"></div>
+    <script>
+      var cloudTieConfig = {
+          url: document.location.href,
+          sourceId: "",
+          productKey: "86144dca1df2486eaad14d94c927017a",
+          target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
+
+        <!-- Disqus Comments -->
+
+
+    </div>
+
+    
+
+
+        </main>
+        <footer class="footer syuanpi fadeIn" id="footer">
+    <hr>
+    <div class="footer-wrapper">
+        <div class="left">
+            <div class="contact-icon">
+    
+    
+    
+    
+    
+    
+    
+    
+        
+            <a href="https://github.com/gearace" class="iconfont icon-github" title="github"></a>
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+            <a href="https://weibo.com/holyeah" class="iconfont icon-weibo" title="weibo"></a>
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+            <a href="https://twitter.com/JeaRayee" class="iconfont icon-twitter" title="twitter"></a>
+        
+        
+        
+        
+        
+    
+</div>
+        </div>
+        <div class="right">
+            <div class="copyright">
+    <div class="info">
+        <span>&copy;</span>
+        <span>2017 ~ 2017</span>
+        <span>❤</span>
+        <span>Gearace</span>
+    </div>
+    <div class="theme">
+        <span>
+            动力来源于
+            <a href="http://hexo.io/" target="_blank">Hexo </a>
+        </span>
+        <span>
+            主题
+            <a href="https://github.com/ColMugX/hexo-theme-Nlvi"> Nlvi </a>
+        </span>
+    </div>
+    
+</div>
+        </div>
+    </div>
+</footer>
+    </div>
+    <script src="/script/nlvi.js"></script>
+
+    <script src="/lightbox/js/lightbox.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    document.body.addEventListener('touchstart', function () {});
+    $('.progress').hide();
+    $('.body').show();
+    Nlvi.tagcloud();
+    Nlvi.back2top();
+    Nlvi.showToc();
+    Nlvi.showComments();
+    Nlvi.showReward()
+
+    !CONFIG.animate && Nlvi.offAnimate();
+    CONFIG.lightbox && Nlvi.onPicBox();
+})
+</script>
+    </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">用koa堆个Web框架（二）</a></li>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#处理请求"><span class="toc-text">处理请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#http-请求分析"><span class="toc-text">http 请求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http-请求方法"><span class="toc-text">http 请求方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http-请求路径"><span class="toc-text">http 请求路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http-请求参数"><span class="toc-text">http 请求参数</span></a></li></ol></li></ol>
+        </div>
+    </div>
+
+    
+    <div class="backtop syuanpi dead toTop" id="backtop">
+    <i class="iconfont icon-up"></i>
+    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
+</div>
+</body>
+</html>
