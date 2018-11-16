@@ -198,6 +198,7 @@
 </tr>
 </tbody>
 </table>
+<a id="more"></a>
 <p>然而仔细看就会发现一个定义很奇怪的地方，GET /posts/:id .show和GET /posts/:id/edit .edit请求，都是获取一条记录的信息，这里的.edit真不是用来更新的，下面的PUT /posts/:id才是用来更新的，那么这里是不是该理解为.show是详情展示页，.edit是编辑表单页？这样说来，.create就不应该对应在/posts路径，而是/posts/new路径，而.index也还需要一个POST方法对应查询翻页，.update的router name应该符合.edit</p>
 <p>针对以上的疑惑，整理上表格</p>
 <table>
