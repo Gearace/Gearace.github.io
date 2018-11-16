@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>
-    逼格人溜溜溜
-    
-        | 代码有逼格儿，生活溜溜溜儿
-    
-</title>
+    <title> 内网穿透启用80端口 · 逼格人溜溜溜 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -124,10 +119,6 @@
         <main class="main" id="main">
             
     
-
-<section class="posts">
-    
-        
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
@@ -135,172 +126,26 @@
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2018/11/17/egg-js填坑/">egg.js填坑</a>
+                内网穿透启用80端口
             
             </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/微信小程序/">微信小程序</a>
+                    
+                        <a href="/tags/frp/">frp</a>
+                    
+                        <a href="/tags/nginx/">nginx</a>
+                    
+                    </div>
+                
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                
-                    <h2 id="egg-js路由坑"><a href="#egg-js路由坑" class="headerlink" title="egg.js路由坑"></a>egg.js路由坑</h2><p>官方实现了RESTful风格URL路由的定义，<code>app.resources(&#39;routerName&#39;, &#39;pathMatch&#39;, controller)</code>，如下表所示</p>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Path</th>
-<th>Route Name</th>
-<th>Controller.Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GET</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.index</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/new</td>
-<td>new_post</td>
-<td>app.controllers.posts.new</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.show</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id/edit</td>
-<td>edit_post</td>
-<td>app.controllers.posts.edit</td>
-</tr>
-<tr>
-<td>POST</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.create</td>
-</tr>
-<tr>
-<td>PUT</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.update</td>
-</tr>
-<tr>
-<td>DELETE</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.destroy</td>
-</tr>
-</tbody>
-</table>
-<p>然而仔细看就会发现一个定义很奇怪的地方，GET /posts/:id .show和GET /posts/:id/edit .edit请求，都是获取一条记录的信息，这里的.edit真不是用来更新的，下面的PUT /posts/:id才是用来更新的，那么这里是不是该理解为.show是详情展示页，.edit是编辑表单页？这样说来，.create就不应该对应在/posts路径，而是/posts/new路径，而.index也还需要一个POST方法对应查询翻页，.update的router name应该符合.edit</p>
-<p>针对以上的疑惑，整理上表格</p>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Path</th>
-<th>Route Name</th>
-<th>Controller.Action</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GET</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.index</td>
-<td>列表页</td>
-</tr>
-<tr>
-<td>POST</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.paging</td>
-<td>查询翻页</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/new</td>
-<td>new_post</td>
-<td>app.controllers.posts.new</td>
-<td>新增表单页</td>
-</tr>
-<tr>
-<td>POST</td>
-<td>/posts/new</td>
-<td>new_post</td>
-<td>app.controllers.posts.create</td>
-<td>新增提交</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.show</td>
-<td>详情页</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id/edit</td>
-<td>edit_post</td>
-<td>app.controllers.posts.edit</td>
-<td>修改表单页</td>
-</tr>
-<tr>
-<td>PUT</td>
-<td>/posts/:id/edit</td>
-<td>edit_post</td>
-<td>app.controllers.posts.update</td>
-<td>修改提交</td>
-</tr>
-<tr>
-<td>DELETE</td>
-<td>/posts/:id</td>
-<td>destroy_post</td>
-<td>app.controllers.posts.destroy</td>
-<td>删除页</td>
-</tr>
-</tbody>
-</table>
-<p>怎么改源码呢？</p>
-<p>/node_module/egg-core/lib/utils/router.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> REST_MAP = &#123;</span><br><span class="line">  index: &#123;</span><br><span class="line">    suffix: <span class="string">''</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  paging: &#123;</span><br><span class="line">    suffix: <span class="string">''</span>,</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="keyword">new</span>: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    namePrefix: <span class="string">'new_'</span>,</span><br><span class="line">    suffix: <span class="string">'new'</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  create: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    namePrefix: <span class="string">'new_'</span>,</span><br><span class="line">    suffix: <span class="string">'new'</span>,</span><br><span class="line">    method: <span class="string">'POST'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  show: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    suffix: <span class="string">':id'</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  edit: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    namePrefix: <span class="string">'edit_'</span>,</span><br><span class="line">    suffix: <span class="string">':id/edit'</span>,</span><br><span class="line">    method: <span class="string">'GET'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  update: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    namePrefix: <span class="string">'edit_'</span>,</span><br><span class="line">    suffix: <span class="string">':id/edit'</span>,</span><br><span class="line">    method: [ <span class="string">'PATCH'</span>, <span class="string">'PUT'</span> ],</span><br><span class="line">  &#125;,</span><br><span class="line">  destroy: &#123;</span><br><span class="line">    member: <span class="literal">true</span>,</span><br><span class="line">    namePrefix: <span class="string">'destroy_'</span>,</span><br><span class="line">    suffix: <span class="string">':id'</span>,</span><br><span class="line">    method: <span class="string">'DELETE'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h2 id="mysql查询条件坑"><a href="#mysql查询条件坑" class="headerlink" title="mysql查询条件坑"></a>mysql查询条件坑</h2><p>egg使用了ali-rds的插件，这个插件实现并不完善，很多功能都缺失了，简单用用还行，有点小问题就自己改改好了。where子句只有in和=，没有like和null真的是不够用，按照issues修改/node_modules/ali-rds/lib/operator.js</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">proto._where = <span class="function"><span class="keyword">function</span>(<span class="params">where</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!where) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">''</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> wheres = [];</span><br><span class="line">  <span class="keyword">const</span> values = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> where) &#123;</span><br><span class="line">    <span class="keyword">let</span> value = where[key];</span><br><span class="line">    <span class="keyword">if</span> (key.slice(<span class="number">-10</span>) === <span class="string">'__contains'</span>) &#123;</span><br><span class="line">      key = key.slice(<span class="number">0</span>, <span class="number">-10</span>);</span><br><span class="line">      value = <span class="string">`%<span class="subst">$&#123;value&#125;</span>%`</span>;</span><br><span class="line">      wheres.push(<span class="string">'?? LIKE (?)'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? IN (?)'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value === <span class="literal">null</span>) &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? IS NULL'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? = ?'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    values.push(key);</span><br><span class="line">    <span class="keyword">if</span> (value !== <span class="literal">null</span>) &#123;</span><br><span class="line">      values.push(value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (wheres.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.format(<span class="string">' WHERE '</span> + wheres.join(<span class="string">' AND '</span>), values);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-                
-            
-        
-        </div>
-        
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2018年11月17日</span>
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2018/11/17/内网穿透启用80端口/">内网穿透启用80端口</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="内网穿透启用80端口"><a href="#内网穿透启用80端口" class="headerlink" title="内网穿透启用80端口"></a>内网穿透启用80端口</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ol>
+                <h2 id="内网穿透启用80端口"><a href="#内网穿透启用80端口" class="headerlink" title="内网穿透启用80端口"></a>内网穿透启用80端口</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ol>
 <li>一台本地机器</li>
 <li>一台云服务器：root@47.90.56.26开放8880端口</li>
 <li>一个备案的域名：配置二级域名wx.mydomain.cn解析到云服务器8880端口</li>
@@ -340,20 +185,70 @@
 <li>web browser request –&gt; nginx[wx.mydomain.cn:80~127.0.0.1:8880] –&gt; frps[8880] –&gt; frpc[8880] –&gt; local webserver</li>
 </ul>
 
-                
             
         
         </div>
         
+            
+            
+    <hr class="copy-line">
+    <div class="post-copyright">
+        <div class="copy-author">
+            <span>作者 :</span>
+            <span>Gearace</span>
+        </div>
+        <div class="copy-url">
+            <span>地址 :</span>
+            <a href="http://biger666.win/2018/11/17/内网穿透启用80端口/">http://biger666.win/2018/11/17/内网穿透启用80端口/</a>
+        </div>
+        <div class="copy-origin">
+            <span>来源 :</span>
+            <a href="http://biger666.win">http://biger666.win</a>
+        </div>
+        <div class="copy-license">
+            
+            著作权归作者所有，转载请联系作者获得授权。
+        </div>
+    </div>
+
+        
     </article>
     
+        
+    <nav class="article-page">
+        
+            <a href="/2018/11/17/egg-js填坑/" id="art-left" class="art-right">
+                <span class="next-title">
+                    egg.js填坑<i class="iconfont icon-right"></i> 
+                </span>
+            </a>
+        
+        
+    </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more syuanpi jumping-in long infinite" style="font-size:24px;display:block;text-align:center;"></i>
+    <div class="post-comments" id="post-comments" style="display: none;margin: auto 16px;">
+        
+        
+        
+    <div class="cloud-tie-wrapper" id="cloud-tie-wrapper"></div>
+    <script>
+      var cloudTieConfig = {
+          url: document.location.href,
+          sourceId: "",
+          productKey: "86144dca1df2486eaad14d94c927017a",
+          target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
+
+        <!-- Disqus Comments -->
+
+
+    </div>
 
     
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
-    </nav>
 
 
         </main>
@@ -446,6 +341,16 @@ $(document).ready(function(){
 })
 </script>
     </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">内网穿透启用80端口</a></li>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#内网穿透启用80端口"><span class="toc-text">内网穿透启用80端口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备工作"><span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用ssh-R内网穿透"><span class="toc-text">用ssh -R内网穿透</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用frp内网穿透，官方文档"><span class="toc-text">用frp内网穿透，官方文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原理解析"><span class="toc-text">原理解析</span></a></li></ol></li></ol>
+        </div>
+    </div>
+
     
     <div class="backtop syuanpi dead toTop" id="backtop">
     <i class="iconfont icon-up"></i>

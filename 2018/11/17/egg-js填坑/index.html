@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>
-    逼格人溜溜溜
-    
-        | 代码有逼格儿，生活溜溜溜儿
-    
-</title>
+    <title> egg.js填坑 · 逼格人溜溜溜 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -124,10 +119,6 @@
         <main class="main" id="main">
             
     
-
-<section class="posts">
-    
-        
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
@@ -135,15 +126,24 @@
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2018/11/17/egg-js填坑/">egg.js填坑</a>
+                egg.js填坑
             
             </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/egg-js/">egg.js</a>
+                    
+                        <a href="/tags/nodejs/">nodejs</a>
+                    
+                    </div>
+                
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                
-                    <h2 id="egg-js路由坑"><a href="#egg-js路由坑" class="headerlink" title="egg.js路由坑"></a>egg.js路由坑</h2><p>官方实现了RESTful风格URL路由的定义，<code>app.resources(&#39;routerName&#39;, &#39;pathMatch&#39;, controller)</code>，如下表所示</p>
+                <h2 id="egg-js路由坑"><a href="#egg-js路由坑" class="headerlink" title="egg.js路由坑"></a>egg.js路由坑</h2><p>官方实现了RESTful风格URL路由的定义，<code>app.resources(&#39;routerName&#39;, &#39;pathMatch&#39;, controller)</code>，如下表所示</p>
 <table>
 <thead>
 <tr>
@@ -275,85 +275,70 @@
 <h2 id="mysql查询条件坑"><a href="#mysql查询条件坑" class="headerlink" title="mysql查询条件坑"></a>mysql查询条件坑</h2><p>egg使用了ali-rds的插件，这个插件实现并不完善，很多功能都缺失了，简单用用还行，有点小问题就自己改改好了。where子句只有in和=，没有like和null真的是不够用，按照issues修改/node_modules/ali-rds/lib/operator.js</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">proto._where = <span class="function"><span class="keyword">function</span>(<span class="params">where</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!where) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">''</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> wheres = [];</span><br><span class="line">  <span class="keyword">const</span> values = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> where) &#123;</span><br><span class="line">    <span class="keyword">let</span> value = where[key];</span><br><span class="line">    <span class="keyword">if</span> (key.slice(<span class="number">-10</span>) === <span class="string">'__contains'</span>) &#123;</span><br><span class="line">      key = key.slice(<span class="number">0</span>, <span class="number">-10</span>);</span><br><span class="line">      value = <span class="string">`%<span class="subst">$&#123;value&#125;</span>%`</span>;</span><br><span class="line">      wheres.push(<span class="string">'?? LIKE (?)'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? IN (?)'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value === <span class="literal">null</span>) &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? IS NULL'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      wheres.push(<span class="string">'?? = ?'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    values.push(key);</span><br><span class="line">    <span class="keyword">if</span> (value !== <span class="literal">null</span>) &#123;</span><br><span class="line">      values.push(value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (wheres.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.format(<span class="string">' WHERE '</span> + wheres.join(<span class="string">' AND '</span>), values);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-                
             
         
         </div>
         
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2018年11月17日</span>
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2018/11/17/内网穿透启用80端口/">内网穿透启用80端口</a>
             
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="内网穿透启用80端口"><a href="#内网穿透启用80端口" class="headerlink" title="内网穿透启用80端口"></a>内网穿透启用80端口</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ol>
-<li>一台本地机器</li>
-<li>一台云服务器：root@47.90.56.26开放8880端口</li>
-<li>一个备案的域名：配置二级域名wx.mydomain.cn解析到云服务器8880端口</li>
-<li><p>云服务安装nginx：配置wx.mydomain.cn.conf</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  listen 80;</span><br><span class="line">  server_name wx.mydomain.cn;</span><br><span class="line"></span><br><span class="line">  location / &#123;</span><br><span class="line">    proxy_pass http://127.0.0.1:8880;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_set_header X-Forwarded-Host $http_host;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p> 执行<code>nginx -s reload</code>重新加载nginx</p>
-</li>
-<li><p>https配置</p>
-</li>
-</ol>
-<h3 id="用ssh-R内网穿透"><a href="#用ssh-R内网穿透" class="headerlink" title="用ssh -R内网穿透"></a>用ssh -R内网穿透</h3><ol>
-<li>在本地机器终端运行ssh命令<code>ssh -fNR 8880:127.0.0.1:8880 root@47.90.56.26</code>，<a href="https://www.cnblogs.com/kwongtai/p/6903420.html" target="_blank" rel="noopener">参考-R参数部分</a>，<a href="https://blog.csdn.net/autoliuweijie/article/details/80283689" target="_blank" rel="noopener">参考举例</a><br> -f是后台运行<br> -N是无交互命令<br> -R是反向代理</li>
-<li>在云服务器上执行<code>netstat -anltp | grep 8880</code>查看端口监听</li>
-<li>如果ssh执行后出现<code>Warning: remote port forwarding failed for listen port 8880</code>，在服务器上查看端口为<strong>CLOSE_WAIT</strong>状态，需要通过<code>netstat -nap|grep 8880|grep CLOSE_WAIT| awk &#39;{print $7}&#39;|awk -F&quot;\/&quot; &#39;{print $1}&#39;|awk &#39;!a[$1]++&#39;|xargs kill -9</code>杀死对应进程，再重试ssh命令，<a href="https://blog.csdn.net/laoyiin/article/details/51396035" target="_blank" rel="noopener">参考</a></li>
-</ol>
-<h3 id="用frp内网穿透，官方文档"><a href="#用frp内网穿透，官方文档" class="headerlink" title="用frp内网穿透，官方文档"></a>用frp内网穿透，<a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">官方文档</a></h3><ol>
-<li>根据服务器和本地机器的操作系统，下载对应的<a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">frp</a></li>
-<li><p>云服务器配置frps.ini</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br><span class="line">vhost_http_port = 8880</span><br></pre></td></tr></table></figure>
-<p> 启动<code>./frps -c ./frps.ini</code></p>
-</li>
-<li><p>本地机器配置frpc.ini</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 47.90.56.26</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[web]</span><br><span class="line">type = http</span><br><span class="line">local_port = 8880</span><br><span class="line">custom_domains = wx.mydomain.cn</span><br></pre></td></tr></table></figure>
-<p> 启动<code>./frpc -c ./frpc.ini</code></p>
-</li>
-<li><p>测试：浏览器打开 <a href="http://wx.mydomain.cn" target="_blank" rel="noopener">http://wx.mydomain.cn</a> ，获得对应返回 <strong>The page you visit not found.</strong> 证明frp和nginx配置已经成功。</p>
-</li>
-<li><p>用systemctl后台启动、停止、重启、日志(适用于macos&amp;linux)<a href="https://blog.csdn.net/x7418520/article/details/81077652" target="_blank" rel="noopener">参考</a></p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=frps</span><br><span class="line">After=network.target syslog.target</span><br><span class="line">Wants=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">#启动服务的命令（此处是绝对路径）</span><br><span class="line">ExecStart=/your/path/frps -c /your/path/frps.ini</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#启动frps </span><br><span class="line">sudo systemctl start frps </span><br><span class="line">#打开自启动 </span><br><span class="line">sudo systemctl enable frps</span><br><span class="line">#重启frps</span><br><span class="line">sudo systemctl restart frps</span><br><span class="line">#停止frps</span><br><span class="line">sudo systemctl stop frps</span><br><span class="line">#查看日志</span><br><span class="line">sudo systemctl status frps</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h3><ul>
-<li>nginx的作用是反向代理域名wx.mydomain.cn端口80的请求，目标指向本地127.0.0.1:8880。这样就可以满足微信要求的http80端口的要求。</li>
-<li>frp的作用是将本地机器的内网穿透，反向代理到云服务的端口上。frps.ini的bind_port和frpc.ini的server_port保持一致供frp通信，</li>
-<li>frps.ini的vhost_http_port供访问本地frpc.ini的local_port的http反向代理端口，需保持一致。</li>
-<li>web browser request –&gt; nginx[wx.mydomain.cn:80~127.0.0.1:8880] –&gt; frps[8880] –&gt; frpc[8880] –&gt; local webserver</li>
-</ul>
-
-                
-            
-        
+    <hr class="copy-line">
+    <div class="post-copyright">
+        <div class="copy-author">
+            <span>作者 :</span>
+            <span>Gearace</span>
         </div>
+        <div class="copy-url">
+            <span>地址 :</span>
+            <a href="http://biger666.win/2018/11/17/egg-js填坑/">http://biger666.win/2018/11/17/egg-js填坑/</a>
+        </div>
+        <div class="copy-origin">
+            <span>来源 :</span>
+            <a href="http://biger666.win">http://biger666.win</a>
+        </div>
+        <div class="copy-license">
+            
+            著作权归作者所有，转载请联系作者获得授权。
+        </div>
+    </div>
+
         
     </article>
     
-
-    
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
+        
+    <nav class="article-page">
+        
+        
+            <a href="/2018/11/17/内网穿透启用80端口/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>内网穿透启用80端口
+                </span>
+            </a>
+        
     </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more syuanpi jumping-in long infinite" style="font-size:24px;display:block;text-align:center;"></i>
+    <div class="post-comments" id="post-comments" style="display: none;margin: auto 16px;">
+        
+        
+        
+    <div class="cloud-tie-wrapper" id="cloud-tie-wrapper"></div>
+    <script>
+      var cloudTieConfig = {
+          url: document.location.href,
+          sourceId: "",
+          productKey: "86144dca1df2486eaad14d94c927017a",
+          target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
+
+        <!-- Disqus Comments -->
+
+
+    </div>
+
+    
 
 
         </main>
@@ -446,6 +431,16 @@ $(document).ready(function(){
 })
 </script>
     </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">egg.js填坑</a></li>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#egg-js路由坑"><span class="toc-text">egg.js路由坑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql查询条件坑"><span class="toc-text">mysql查询条件坑</span></a></li></ol>
+        </div>
+    </div>
+
     
     <div class="backtop syuanpi dead toTop" id="backtop">
     <i class="iconfont icon-up"></i>
