@@ -145,27 +145,14 @@
                 
                     <h2 id="自动添加ip黑名单"><a href="#自动添加ip黑名单" class="headerlink" title="自动添加ip黑名单"></a>自动添加ip黑名单</h2><ol>
 <li><h5 id="打开nginx-conf中log日志（默认格式即可）"><a href="#打开nginx-conf中log日志（默认格式即可）" class="headerlink" title="打开nginx.conf中log日志（默认格式即可）"></a>打开nginx.conf中log日志（默认格式即可）</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="增加iptables的过滤规则"><a href="#增加iptables的过滤规则" class="headerlink" title="增加iptables的过滤规则"></a>增加iptables的过滤规则</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 语法</span></span><br><span class="line">sudo iptables -t filter -A INPUT -s 61.151.206.221 -p tcp --dport 80 -j DROP</span><br><span class="line">sudo iptables -t filter -I INPUT 1 -s 61.151.206.221 -p tcp --dport 80 -j DROP</span><br><span class="line"><span class="comment"># 增加过滤链</span></span><br><span class="line">sudo iptables -A INPUT -m <span class="built_in">set</span> --match-set blacklist src -j DROP</span><br></pre></td></tr></table></figure>
-<p>-t 增加到filter表中</p>
-<p>-A增加到尾部（-I插入到指定位置，-R修改制定位置，-D删除），INPUT入链（OUTPUT出链）</p>
-<p>-s源地址，-p协议，–dport目的端口，–sport源端口，-d目的地址</p>
-<p>-j处理方式，DROP悄悄抛弃（ACCEPT接受，REJECT明确拒绝，REDIRECT重定向）</p>
-</li>
-<li><h5 id="安装ipset"><a href="#安装ipset" class="headerlink" title="安装ipset"></a>安装ipset</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ipset</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="配置ipset"><a href="#配置ipset" class="headerlink" title="配置ipset"></a>配置ipset</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo ipset create blacklist <span class="built_in">hash</span>:ip</span><br><span class="line">sudo ipset add blacklist 35.136.11.231</span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="编写自动过滤脚本"><a href="#编写自动过滤脚本" class="headerlink" title="编写自动过滤脚本"></a>编写自动过滤脚本</h5><p>awk -F指定分隔符，\$1和\$2分割后的结果，{print}打印到控制台，{system}执行命令</p>
-<p>uniq去重</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># blockip.sh</span></span><br><span class="line">tail -n50000 /var/<span class="built_in">log</span>/nginx/access.log | awk -F<span class="string">"\""</span> <span class="string">'&#123;print $1,$2&#125;'</span> | grep <span class="string">'.php'</span> | awk <span class="string">'&#123;print $1&#125;'</span>| uniq | awk <span class="string">'&#123;system("sudo ipset add blacklist "$1)&#125;'</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><h5 id="增加定时任务"><a href="#增加定时任务" class="headerlink" title="增加定时任务"></a>增加定时任务</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出root用户定时任务</span></span><br><span class="line">crontab -u root -l</span><br><span class="line"><span class="comment"># 列出当前用户定时任务</span></span><br><span class="line">crontab -l</span><br><span class="line"><span class="comment"># 编辑定时任务</span></span><br><span class="line">crontab -e</span><br><span class="line"><span class="comment"># 定时任务增加如下内容，每小时执行一次</span></span><br><span class="line"><span class="comment"># 举例：25,55 2 19-25 6,12 * /bin/rm -f /var/log/nginx/error.log.* </span></span><br><span class="line"><span class="comment"># 解释：每年的六月和十二月，19号到25号的2点25分和55分执行删除命令。 </span></span><br><span class="line"><span class="comment"># 分 时 日 月 周几</span></span><br><span class="line"><span class="comment"># * */1 * * * /home/ubuntu/blockip.sh</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-                
+                    
             
+        
+            <p class="content-link">
+                <a href="/2019/01/22/ubuntu16-04维护/#more">
+                    <span class="iconfont icon-right">继续阅读</span>
+                </a>
+            </p>
         
         </div>
         
