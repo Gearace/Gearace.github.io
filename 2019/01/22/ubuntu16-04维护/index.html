@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <title>
-    逼格人溜溜溜
-    
-        | 代码有逼格儿，生活溜溜溜儿
-    
-</title>
+    <title> ubuntu16.04维护 · 逼格人溜溜溜 </title>
     <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -124,10 +119,6 @@
         <main class="main" id="main">
             
     
-
-<section class="posts">
-    
-        
     <article class="post">
         <header class="post-header">
             <div class="post-time syuanpi riseIn-light back-1">
@@ -135,15 +126,24 @@
             </div>
             <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2019/01/22/ubuntu16-04维护/">ubuntu16.04维护</a>
+                ubuntu16.04维护
             
             </h1>
+            
+                
+                    <div class="post-tags syuanpi riseIn-light back-3">
+                    
+                        <a href="/tags/ubuntu/">ubuntu</a>
+                    
+                        <a href="/tags/aliyun/">aliyun</a>
+                    
+                    </div>
+                
             
         </header>
         <div class="post-content syuanpi riseIn-light back-3">
             
-                
-                    <h2 id="自动添加ip黑名单"><a href="#自动添加ip黑名单" class="headerlink" title="自动添加ip黑名单"></a>自动添加ip黑名单</h2><ol>
+                <h2 id="自动添加ip黑名单"><a href="#自动添加ip黑名单" class="headerlink" title="自动添加ip黑名单"></a>自动添加ip黑名单</h2><ol>
 <li><h5 id="打开nginx-conf中log日志（默认格式即可）"><a href="#打开nginx-conf中log日志（默认格式即可）" class="headerlink" title="打开nginx.conf中log日志（默认格式即可）"></a>打开nginx.conf中log日志（默认格式即可）</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
 </li>
 <li><h5 id="增加iptables的过滤规则"><a href="#增加iptables的过滤规则" class="headerlink" title="增加iptables的过滤规则"></a>增加iptables的过滤规则</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 语法</span></span><br><span class="line">sudo iptables -t filter -A INPUT -s 61.151.206.221 -p tcp --dport 80 -j DROP</span><br><span class="line">sudo iptables -t filter -I INPUT 1 -s 61.151.206.221 -p tcp --dport 80 -j DROP</span><br><span class="line"><span class="comment"># 增加过滤链</span></span><br><span class="line">sudo iptables -A INPUT -m <span class="built_in">set</span> --match-set blacklist src -j DROP</span><br></pre></td></tr></table></figure>
@@ -164,175 +164,70 @@
 </li>
 </ol>
 
-                
             
         
         </div>
         
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2018年11月23日</span>
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
             
-                <a href="/2018/11/23/ubuntu16.04部署/">ubuntu16.04部署</a>
             
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="SSH连接："><a href="#SSH连接：" class="headerlink" title="SSH连接："></a>SSH连接：</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -l root 47.93.227.*</span><br><span class="line">$ ssh -p 9922 fdroot@120.227.4.*</span><br><span class="line">$ ssh -i <span class="string">"zhengshu.pem"</span> ubuntu@94.191.76.*</span><br><span class="line"><span class="comment">### 端口映射</span></span><br><span class="line">$ ssh -fN -l root -i ~/aws_tokyo.pem -L 9999:localhost:27017 ubuntu@ec2-52-197-190-115.ap-northeast-1.compute.amazonaws.com</span><br></pre></td></tr></table></figure>
-                    
-            
-        
-            <p class="content-link">
-                <a href="/2018/11/23/ubuntu16.04部署/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
-        
+    <hr class="copy-line">
+    <div class="post-copyright">
+        <div class="copy-author">
+            <span>作者 :</span>
+            <span>Gearace</span>
         </div>
-        
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2018年11月17日</span>
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2018/11/17/egg-js填坑/">egg.js填坑</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="egg-js路由坑"><a href="#egg-js路由坑" class="headerlink" title="egg.js路由坑"></a>egg.js路由坑</h2><p>官方实现了RESTful风格URL路由的定义，<code>app.resources(&#39;routerName&#39;, &#39;pathMatch&#39;, controller)</code>，如下表所示</p>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Path</th>
-<th>Route Name</th>
-<th>Controller.Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GET</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.index</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/new</td>
-<td>new_post</td>
-<td>app.controllers.posts.new</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.show</td>
-</tr>
-<tr>
-<td>GET</td>
-<td>/posts/:id/edit</td>
-<td>edit_post</td>
-<td>app.controllers.posts.edit</td>
-</tr>
-<tr>
-<td>POST</td>
-<td>/posts</td>
-<td>posts</td>
-<td>app.controllers.posts.create</td>
-</tr>
-<tr>
-<td>PUT</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.update</td>
-</tr>
-<tr>
-<td>DELETE</td>
-<td>/posts/:id</td>
-<td>post</td>
-<td>app.controllers.posts.destroy</td>
-</tr>
-</tbody>
-</table>
-                    
-            
-        
-            <p class="content-link">
-                <a href="/2018/11/17/egg-js填坑/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
-        
+        <div class="copy-url">
+            <span>地址 :</span>
+            <a href="http://biger666.win/2019/01/22/ubuntu16-04维护/">http://biger666.win/2019/01/22/ubuntu16-04维护/</a>
         </div>
-        
-    </article>
-    
-
-    
-        
-    <article class="post">
-        <header class="post-header">
-            <div class="post-time syuanpi riseIn-light back-1">
-                <span>2018年11月17日</span>
-            </div>
-            <h1 class="post-title syuanpi riseIn-light back-2">
-            
-                <a href="/2018/11/17/内网穿透启用80端口/">内网穿透启用80端口</a>
-            
-            </h1>
-            
-        </header>
-        <div class="post-content syuanpi riseIn-light back-3">
-            
-                
-                    <h2 id="内网穿透启用80端口"><a href="#内网穿透启用80端口" class="headerlink" title="内网穿透启用80端口"></a>内网穿透启用80端口</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ol>
-<li><p>一台本地机器</p>
-</li>
-<li><p>一台云服务器：root@47.90.56.26开放8880端口</p>
-</li>
-<li><p>一个备案的域名：配置二级域名wx.mydomain.cn解析到云服务器8880端口</p>
-                    
-            
-        
-            <p class="content-link">
-                <a href="/2018/11/17/内网穿透启用80端口/#more">
-                    <span class="iconfont icon-right">继续阅读</span>
-                </a>
-            </p>
-        
+        <div class="copy-origin">
+            <span>来源 :</span>
+            <a href="http://biger666.win">http://biger666.win</a>
         </div>
+        <div class="copy-license">
+            
+            著作权归作者所有，转载请联系作者获得授权。
+        </div>
+    </div>
+
         
     </article>
     
-
-    
-</section>
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span>
+        
+    <nav class="article-page">
+        
+        
+            <a href="/2018/11/23/ubuntu16.04部署/" id="art-right" class="art-left">
+                <span class="prev-title"> 
+                    <i class="iconfont icon-left"></i>ubuntu16.04部署
+                </span>
+            </a>
+        
     </nav>
+
+        
+    <i id="com-switch" class="iconfont icon-more syuanpi jumping-in long infinite" style="font-size:24px;display:block;text-align:center;"></i>
+    <div class="post-comments" id="post-comments" style="display: none;margin: auto 16px;">
+        
+        
+        
+    <div class="cloud-tie-wrapper" id="cloud-tie-wrapper"></div>
+    <script>
+      var cloudTieConfig = {
+          url: document.location.href,
+          sourceId: "",
+          productKey: "86144dca1df2486eaad14d94c927017a",
+          target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
+
+        <!-- Disqus Comments -->
+
+
+    </div>
+
+    
 
 
         </main>
@@ -425,6 +320,16 @@ $(document).ready(function(){
 })
 </script>
     </div>
+    
+        
+    <div class="post-toc">
+        <span class="title">文章目录</span>
+        <div class="toc-inner syuanpi back-1 fallIn-light">
+            <li class="title-link"><a href="javascript:;" class="toTop">ubuntu16.04维护</a></li>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#自动添加ip黑名单"><span class="toc-text">自动添加ip黑名单</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#打开nginx-conf中log日志（默认格式即可）"><span class="toc-text">打开nginx.conf中log日志（默认格式即可）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#增加iptables的过滤规则"><span class="toc-text">增加iptables的过滤规则</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#安装ipset"><span class="toc-text">安装ipset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#配置ipset"><span class="toc-text">配置ipset</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#编写自动过滤脚本"><span class="toc-text">编写自动过滤脚本</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#增加定时任务"><span class="toc-text">增加定时任务</span></a></li></ol></li></ol></li></ol></li></ol>
+        </div>
+    </div>
+
     
     <div class="backtop syuanpi dead toTop" id="backtop">
     <i class="iconfont icon-up"></i>
